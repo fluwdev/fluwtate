@@ -1,0 +1,28 @@
+---
+title: devtool
+description: Integrating Redux DevTools with the store.
+---
+
+The `devtool` middleware allows you to integrate your state store with [Redux DevTools](https://github.com/reduxjs/redux-devtools). This enables you to inspect, debug, and manage your application's state directly from the browser's developer tools, making development much easier.
+
+---
+
+### Usage
+
+To use the `devtool` middleware, simply call the `devtool` function and add it to your store using the `use` method.
+
+### Example
+
+```ts
+import { createStore } from "fluwtate";
+import { devtool } from "fluwtate";
+
+const store = createStore({
+  user: null,
+  todos: [],
+});
+
+store.use(devtool("MyCustomStore"));
+```
+
+In this example, we are integrating Redux DevTools with the store, giving it the name "MyCustomStore". You can replace "MyCustomStore" with any custom name for your application.

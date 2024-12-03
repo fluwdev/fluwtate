@@ -1,0 +1,80 @@
+---
+title: async-persistence
+description: Learn how to integrate asynchronous state persistence into your store using `createAsyncPersistenceMiddleware`.
+---
+
+The **Async Persistence Middleware** enables you to persist your application's state asynchronously using browser storage that supports `Promise`-based operations, such as IndexedDB or cloud storage. This is useful when you need to interact with storage systems that handle asynchronous data saving and loading.
+
+---
+
+## Setting Up Async Persistence Middleware
+
+To integrate asynchronous persistence into your store, follow these steps:
+
+### Step 1: Create the Store
+
+First, create your store with the initial state. You can also load the persisted state from an asynchronous storage system (e.g., `IndexedDB`, `localStorage`):
+
+```typescript
+import { createStore } from "fluwtate";
+import { loadAsyncPersistedState } from "fluwtate";
+
+// Load the persisted state asynchronously
+const initialState = await loadAsyncPersistedState({
+  key: "myAppState",
+  storage: localStorage,  // Or a custom async storage
+}) || { user: null, todos: [] };
+
+// Create the store
+const store = createStore(initialState);
+```
+
+### Step 2: Add the Async Persistence Middleware
+
+Add the Async Persistence Middleware to your store to automatically persist the state asynchronously:
+
+```typescript
+import { createAsyncPersistenceMiddleware } from "fluwtate";
+
+// Apply the async persistence middleware
+store.use(createAsyncPersistenceMiddleware({
+  key: "myAppState",
+  storage: localStorage,  // Or a custom async storage
+}));
+```
+
+### Step 3: Customizing the Async Persistence
+You can customize the behavior of async persistence by modifying the serializer, deserializer, or storage options.
+
+**Using Custom Async Storage**
+If you have a custom asynchronous storage system (e.g., IndexedDB, a cloud service), you can pass it into the middleware:
+
+```typescript
+store.use(createAsyncPersistenceMiddleware({
+  key: "myAppState",
+  storage: myCustomAsyncStorage,  // Use a custom async storage
+}));
+```
+
+## Example Usage
+Here’s a complete example of how to set up asynchronous persistence:
+
+```ts
+import { createStore,createAsyncPersistenceMiddleware,loadAsyncPersistedState } from "fluwtate";
+
+// Load the persisted state asynchronously
+const initialState = await loadAsyncPersistedState({
+  key: "myAppState",
+  storage: localStorage,  // Or a custom async storage
+}) || { user: null, todos: [] };
+
+// Create the store
+const store = createStore(initialState);
+
+// Apply the async persistence middleware
+store.use(createAsyncPersistenceMiddleware({
+  key: "myAppState",
+  storage: localStorage,  // Or a custom async storage
+}));
+```
+This setup ensures that your state is saved asynchronously and will persist across page reloads.

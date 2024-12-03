@@ -1,0 +1,73 @@
+---
+title: createModule
+description: Creates a module within the store to manage specific slices of state.
+---
+
+The `createModule` function enables you to create a module within your store. A module is a self-contained section of the state, allowing you to manage and update specific parts of the state independently. This approach is useful when you need to work with a specific part of the state without affecting the entire store.
+
+### Usage
+
+```typescript
+import { createModule } from "fluwtate";
+
+const store = createStore({
+  user: { name: "John", age: 30 },
+  todos: [{ id: 1, task: "Learn TypeScript" }],
+});
+
+const userModule = createModule(store, "user");
+
+const userState = userModule.getState();
+console.log(userState); // { name: "John", age: 30 }
+
+userModule.setState({ name: "Jane" });
+console.log(userModule.getState()); // { name: "Jane", age: 30 }
+```
+
+## Parameters
+
+- `store`: The main store instance that holds the global state. This is passed as the first argument.
+- `moduleName`: The specific slice of the state that you want to manage. This corresponds to a key in the global state (e.g., "user" or "todos").
+
+
+## Return Value
+The `createModule` function returns an object with the following methods:
+
+- `getState()`: Returns the current state of the specified module.
+- `setState(updater)`: Updates the state of the specified module. The updater can either be a function that receives the current state of the module and returns a new state, or a partial object to merge with the existing module state.
+- `subscribe(listener)`: Subscribes a listener to the state changes of the specified module. The listener will only be called with changes related to the module.
+
+## Example
+
+Creating and Using a Module
+
+```ts
+// Create a store with user and todos slices of state
+const store = createStore({
+  user: { name: "Alice", age: 25 },
+  todos: [{ id: 1, task: "Learn TypeScript" }],
+});
+
+// Create a module for the user slice
+const userModule = createModule(store, "user");
+
+// Get the current state of the user module
+const user = userModule.getState();
+console.log(user); // { name: "Alice", age: 25 }
+
+// Update the user state
+userModule.setState({ age: 26 });
+console.log(userModule.getState()); // { name: "Alice", age: 26 }
+
+// Subscribe to changes in the user module
+const unsubscribe = userModule.subscribe((state) => {
+  console.log("User state updated:", state);
+});
+
+// Changing state will trigger the subscription
+userModule.setState({ name: "Bob" });
+// Output: "User state updated: { name: 'Bob', age: 26 }"
+
+// Unsubscribe when done
+unsubscribe();
+```

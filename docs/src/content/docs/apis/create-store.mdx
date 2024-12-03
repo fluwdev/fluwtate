@@ -1,0 +1,90 @@
+---
+title: createStore
+description: Creating and managing a store with support for asynchronous initial state.
+---
+
+The `createStore` function is used to create a state store, allowing you to manage the state of your application. It can handle both synchronous and asynchronous initial state, making it flexible and suitable for various use cases, such as loading state from an API or other asynchronous operations.
+
+## Usage
+
+To create a store, simply call the `createStore` function with the initial state. If the initial state is a function, it will be treated as an asynchronous operation and resolved before setting the state.
+
+### Example
+
+```ts
+import { createStore } from "fluwtate";
+
+const initialState = {
+  user: null,
+  todos: [],
+};
+
+const store = createStore(initialState);
+```
+
+## Asynchronous Store
+
+If the initial state is a function, it will be treated as an asynchronous operation and resolved before setting the state.
+
+```ts
+import { createStore } from "fluwtate";
+
+const initialState = async () => {
+  const response = await fetch("/api/initial-state");
+  const data = await response.json();
+  return data;
+};
+
+const store = createStore(initialState);
+```
+
+In the asynchronous example, the initialStateAsync function fetches user data asynchronously before resolving the initial state for the store.
+
+## Parameters
+- `initialState`: The initial state for the store. It can be:
+    - A synchronous value representing the initial state (e.g., an object, array, etc.).
+    - A function returning a Promise that resolves to the initial state (useful for async operations like fetching data).
+
+## Methods
+
+### `getState()`
+Returns the current state of the store.
+
+```ts
+const state = store.getState();
+```
+
+### `setState(updater)`
+Updates the state of the store using the provided updater function.
+
+```ts
+store.setState((state) => ({
+  todos: [...state.todos, newTodo],
+}));
+```
+
+### `subscribe(listener)`
+Subscribes to state changes in the store and executes the provided listener function.
+
+```ts
+store.subscribe((state) => {
+  console.log("State changed:", state);
+});
+```
+
+### `use(middleware)`
+Adds a middleware to the store. Middleware is a function that intercepts state changes and can perform additional actions, such as logging, validation, or persistence.
+
+```ts
+const middleware = (prevState, nextState) => {
+  console.log("State changed:", prevState, nextState);
+  return true;
+};
+store.use(middleware);
+```
+
+## Key Features
+- Handles both synchronous and asynchronous initial state.
+- Provides a simple API for managing state changes.
+- Supports middleware for intercepting state changes and performing additional actions.
+- Offers a flexible and extensible architecture for building complex state management solutions.

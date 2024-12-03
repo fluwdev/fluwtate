@@ -1,0 +1,70 @@
+---
+title: shallow
+description: Performs a shallow comparison between two objects.
+---
+
+The `shallow` function is used to perform a shallow comparison between two objects. It checks if the objects are identical in terms of structure and values, including nested objects. It can be used to determine if two objects are equivalent, accounting for references and deep equality.
+
+### Usage
+
+The function compares two objects (or values) to see if they are equivalent based on their properties. It works by comparing the objects at all levels of nesting, ensuring that they have the same properties and values.
+
+```ts
+import { shallow } from "fluwtate";
+
+const objA = { a: 1, b: { c: 2 } };
+const objB = { a: 1, b: { c: 2 } };
+const result = shallow(objA, objB);
+console.log(result); // true
+```
+
+## Parameters
+
+- `objA`: The first object to compare. It can be any object or value.
+- `objB`: The second object to compare. It can also be any object or value.
+
+## Return Value
+
+- `boolean`: Returns true if both objects are shallowly equivalent, and false if they are not.
+
+## How It Works
+
+1. **Object Reference Check**: Initially, the function checks if both objects are the same reference using Object.is(). If they are, it returns true.
+2. **Type and Null Check**: If either of the objects is not an object or is null, the function immediately returns false.
+3. **Deep Comparison**: For non-primitive objects, the function recursively compares their keys and values. It ensures that both objects have the same structure and equivalent values, including deep nested properties.
+4. **WeakMap for Cyclic References**: The function uses a WeakMap to track objects that have already been compared, avoiding infinite loops in case of cyclic references.
+
+## Example
+
+### Identical Objects
+
+```ts
+const objA = { a: 1, b: { c: 2 } };
+const objB = { a: 1, b: { c: 2 } };
+
+const result = shallow(objA, objB);
+console.log(result); // true
+```
+
+### Different Objects
+
+```ts
+const objA = { a: 1, b: { c: 2 } };
+const objB = { a: 1, b: { c: 3 } };
+
+const result = shallow(objA, objB);
+console.log(result); // false
+```
+
+### Cyclic References
+
+```ts
+const objA = { a: 1 };
+const objB = { a: 1 };
+
+objA.b = objA; // cyclic reference
+objB.b = objB; // cyclic reference
+
+const result = shallow(objA, objB);
+console.log(result); // true, since cyclic references are handled
+```

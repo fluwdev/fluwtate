@@ -1,0 +1,85 @@
+---
+title: useStore⚛️
+description: A custom hook to subscribe and retrieve a slice of the store's state in a React component.
+---
+
+The `useStore` hook is designed to allow React components to subscribe to a store and retrieve a specific slice of the store's state. It enables efficient re-renders by only updating the component when the selected state changes. The hook works seamlessly with the store's state management system and ensures that the component always has the most up-to-date state.
+
+### Usage
+
+```tsx
+import { useStore } from "fluwtate";
+
+const store = createStore({
+  user: { name: "John", age: 30 },
+  todos: [{ id: 1, task: "Learn TypeScript" }],
+});
+
+function UserComponent() {
+  // Using useStore to get the 'user' slice of the state
+  const user = useStore(store, (state) => state.user);
+
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.age} years old</p>
+    </div>
+  );
+}
+```
+
+## Parameters
+
+- `store`: The store instance to connect to. It should be an object created using the createStore function, which contains the global state.
+- `selector` (optional): A function that selects the slice of state you are interested in. It takes the full state and returns the part that you want to use in your component. By default, it returns the entire state ((state) => state).
+
+## Return Value
+
+The `useStore` hook returns the selected state based on the selector function. This value will be the part of the store's state you are interested in, and it will automatically update the component when that part of the state changes.
+
+## Example
+
+Using useStore to Get a Specific Slice of State
+
+```tsx
+// Create a store with 'user' and 'todos' slices of state
+const store = createStore({
+  user: { name: "Alice", age: 25 },
+  todos: [{ id: 1, task: "Learn TypeScript" }],
+});
+
+function UserComponent() {
+  // Use the 'useStore' hook to get the 'user' slice of the state
+  const user = useStore(store, (state) => state.user);
+
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.age} years old</p>
+    </div>
+  );
+}
+
+function TodoComponent() {
+  // Use the 'useStore' hook to get the 'todos' slice of the state
+  const todos = useStore(store, (state) => state.todos);
+
+  return (
+    <div>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.task}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+Re-rendering on State Change
+The component will automatically re-render when the selected state changes. For example, if you update the `user` slice in the store, the `UserComponent` will re-render with the new `user` data.
+
+## Key Features
+- `Efficient re-renders`: The component only re-renders when the selected slice of the state changes, making it more efficient than subscribing to the entire store.
+- `Custom selector`: The selector function allows you to specify exactly which part of the state your component needs, reducing unnecessary state updates and re-renders.
+- `State subscription`: The hook subscribes to state updates, ensuring the component is always up-to-date with the latest state.
