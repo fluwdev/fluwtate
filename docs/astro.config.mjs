@@ -8,7 +8,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Fluwtate",
-      description: "A documentation site for Fluwtate",
+      description:
+        "Documentation for Fluwtate state management library for React and Vanilla JS",
       logo: {
         dark: "./src/assets/logo-dark.svg",
         light: "./src/assets/logo-dark.svg",
