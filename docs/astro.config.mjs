@@ -1,6 +1,6 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import starlight from '@astrojs/starlight';
+import { defineConfig } from "astro/config";
+import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
         light: "./src/assets/logo-dark.svg",
         alt: "Fluwtate Logo",
       },
-      favicon: "./public/logo-dark.svg",
+      favicon: "./logo-dark.svg",
       customCss: [
         "./src/styles/custom.css",
         "@fontsource/geist-sans/100.css",
