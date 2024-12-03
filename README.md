@@ -1,4 +1,4 @@
-![Images documenting the Fluwtate library](./public/screenshot.webp)
+![Images documenting the Fluwtate library](./screenshot.webp)
 # Fluwtate
 
 Fluwtate is a simple, lightweight state management library for React applications. It provides a store system that allows for efficient state management, persistence, and modular organization. This library supports both synchronous and asynchronous state updates, as well as integration with Redux DevTools.
