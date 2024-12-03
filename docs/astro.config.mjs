@@ -15,7 +15,7 @@ export default defineConfig({
         light: "./src/assets/logo-dark.svg",
         alt: "Fluwtate Logo",
       },
-      favicon: "./logo-dark.svg",
+      favicon: "./src/assets/logo-dark.svg",
       customCss: [
         "./src/styles/custom.css",
         "@fontsource/geist-sans/100.css",
