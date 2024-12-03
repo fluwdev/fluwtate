@@ -1,0 +1,84 @@
+---
+import HobbyBusinnes from './icons-showcase/hobby-businnes.astro'
+
+interface Props {
+  title: string
+}
+
+const { title } = Astro.props
+---
+
+<section class='showcase'>
+  <div class='showcase-inner'>
+    <h2>{title}</h2>
+  </div>
+  <div class='showcase-inner'>
+    <a
+      href='https://hobby-business.vercel.app'
+      target='_blank'
+      class='showcase-logo opacity-50 gray-box'
+    >
+      <HobbyBusinnes class='w-6 h-6' />
+      <p class='text-xl'>Hobby Business</p>
+    </a>
+  </div>
+</section>
+
+<style>
+  .showcase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 0;
+    gap: 2rem;
+  }
+
+  .w-6 {
+    width: 4rem;
+  }
+
+  .h-6 {
+    height: 4rem;
+  }
+
+  .gray-box {
+    filter: grayscale(1);
+  }
+
+  .opacity-50 {
+    opacity: 0.5;
+  }
+
+  .text-xl {
+    font-size: 1rem;
+  }
+
+  .showcase-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .showcase-inner {
+    max-width: 100rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .showcase-inner a {
+    text-decoration: none;
+    transition: filter 0.2s ease-in-out;
+  }
+
+  .showcase-inner a:hover {
+    filter: none;
+  }
+
+  @media (min-width: 50em) {
+    .showcase-inner {
+      max-width: none;
+    }
+  }
+</style>
