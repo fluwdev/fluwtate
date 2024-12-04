@@ -7,6 +7,7 @@ export default defineConfig({
   trailingSlash: "always",
   integrations: [
     starlight({
+      credits: true,
       title: "Fluwtate",
       description:
         "Documentation for Fluwtate state management library for React and Vanilla JS",
@@ -15,7 +16,7 @@ export default defineConfig({
         light: "./src/assets/logo-dark.svg",
         alt: "Fluwtate Logo",
       },
-      favicon: "./src/assets/logo-dark.svg",
+      favicon: "./favicon.svg",
       customCss: [
         "./src/styles/custom.css",
         "@fontsource/geist-sans/100.css",
