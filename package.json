@@ -2,7 +2,7 @@
   "name": "fluwtate",
   "version": "1.0.0",
   "type": "module",
-  "description": "State management for React components",
+  "description": "state management solution for React and TypeScript, alternative zustand",
   "license": "MIT",
   "homepage": "https://github.com/fluwdev/fluwtate",
   "bugs": "https://github.com/fluwdev/fluwtate/issues",
