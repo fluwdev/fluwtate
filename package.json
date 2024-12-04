@@ -1,6 +1,6 @@
 {
   "name": "fluwtate",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "state management solution for React and TypeScript, alternative zustand",
   "license": "MIT",

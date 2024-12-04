@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/fluwdev/fluwtate/compare/v1.1.0...v1.2.0) (2024-12-04)
+
+
+### Features
+
+* **deploy:** build library ([50452af](https://github.com/fluwdev/fluwtate/commit/50452af7551f4543ff40a485c9fd571d00aeaab2))
+
 # [1.1.0](https://github.com/fluwdev/fluwtate/compare/v1.0.0...v1.1.0) (2024-12-04)
 
 
