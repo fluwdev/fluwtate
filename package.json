@@ -2,6 +2,25 @@
   "name": "fluwtate",
   "version": "1.0.0",
   "type": "module",
+  "workspaces": [
+    "docs",
+    "example"
+  ],
+  "description": "State management for React components",
+  "license": "MIT",
+  "homepage": "https://github.com/fluwdev/fluwtate",
+  "bugs": "https://github.com/fluwdev/fluwtate/issues",
+  "author": "fluwdev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fluwjs/fluwtate.git"
+  },
+  "keywords": [
+    "react",
+    "fluw",
+    "fluwtate",
+    "component"
+  ],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "files": [
