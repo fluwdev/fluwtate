@@ -1,13 +1,16 @@
-name: Release Workflow
+name: Install Dependencies
 on:
   push:
     branches:
       - main
 
 jobs:
-  release:
-    name: Release
+  install:
+    name: Install Dependencies
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
       - uses: actions/checkout@v4
 
@@ -16,17 +19,11 @@ jobs:
         with:
           version: 9
 
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: pnpm install
