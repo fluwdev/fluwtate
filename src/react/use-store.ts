@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Store, State, Listener } from "../types";
+import { Store, State, Listener } from "../index.d";
 import { shallow } from "../shallow";
 
 export function useStore<S extends State, T = S>(

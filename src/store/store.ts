@@ -1,48 +1,66 @@
-import { shallow } from "../shallow";
-import { Middleware, Listener, Store, StateUpdater, State } from "../types";
-import { runMiddlewares } from "./middleware";
+import { StorageType } from "../index.d";
+import { persistMiddleware } from "../middleware/persist-middleware";
+import { rehydrateState } from "../modules/rehydrate-state";
 
-export function createStore<S extends State>(
-  initialState: S | (() => Promise<S>)
-): Store<S> {
-  let state: S;
-  const listeners: Set<Listener<S>> = new Set();
-  const middlewareStack: Middleware<S>[] = [];
+export const createStore = <T>(
+  initialState: T,
+  options?: { persistKey?: string; storageType?: StorageType }
+) => {
+  const { persistKey, storageType = "localStorage" } = options || {};
 
-  if (typeof initialState === "function") {
-    (initialState as () => Promise<S>)().then((resolvedState) => {
-      state = resolvedState;
-    });
-  } else {
-    state = initialState;
-  }
+  const listeners = new Set<() => void>();
+  let currentState = persistKey
+    ? rehydrateState(persistKey, initialState, storageType)
+    : initialState;
 
-  return {
-    getState() {
-      return state;
-    },
+  let transactionActive = false;
+  let transactionBuffer: Partial<T> | null = null;
 
-    setState(updater) {
-      const nextState =
-        typeof updater === "function"
-          ? (updater as StateUpdater<S>)(state)
-          : { ...state, ...updater };
+  const getState = () => currentState;
 
-      if (!runMiddlewares(middlewareStack, state, nextState)) return;
-
-      if (!shallow(state, nextState)) {
-        state = nextState;
-        listeners.forEach((listener) => listener(state));
-      }
-    },
-
-    subscribe(listener) {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-
-    use(middleware) {
-      middlewareStack.push(middleware);
-    },
+  const setState = (update: Partial<T>) => {
+    if (transactionActive) {
+      transactionBuffer = { ...transactionBuffer, ...update };
+    } else {
+      applyState(update);
+    }
   };
-}
+
+  const applyState = (update: Partial<T>) => {
+    const prevState = currentState;
+    currentState = { ...currentState, ...update };
+    listeners.forEach((listener) => listener());
+
+    if (persistKey) {
+      persistMiddleware(persistKey, storageType)(prevState, currentState);
+    }
+  };
+
+  const transaction = (
+    callback: (update: (update: Partial<T>) => void) => void
+  ) => {
+    transactionActive = true;
+    transactionBuffer = {};
+
+    try {
+      callback(setState);
+
+      if (transactionBuffer) {
+        applyState(transactionBuffer);
+      }
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      throw error;
+    } finally {
+      transactionActive = false;
+      transactionBuffer = null;
+    }
+  };
+
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  };
+
+  return { getState, setState, subscribe, transaction };
+};

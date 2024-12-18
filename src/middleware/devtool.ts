@@ -1,4 +1,4 @@
-import type { Middleware, State } from "../types";
+import type { Middleware, State } from "../index.d";
 
 export function devtool<S extends State>(name = "CustomStore"): Middleware<S> {
   const devTools =

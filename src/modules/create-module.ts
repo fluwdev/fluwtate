@@ -1,4 +1,4 @@
-import type { Store, State, StateUpdater } from "../types";
+import type { Store, State, StateUpdater } from "../index.d";
 
 export function createModule<S extends State, K extends keyof S>(
   store: Store<S>,

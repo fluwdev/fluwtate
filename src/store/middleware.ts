@@ -1,4 +1,4 @@
-import type { Middleware } from "../types";
+import type { Middleware } from "../index.d";
 
 export function runMiddlewares<S>(
   stack: Middleware<S>[],
