@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/fluwdev/fluwtate/compare/v1.2.0...v1.3.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* Delete types.d ([896ccff](https://github.com/fluwdev/fluwtate/commit/896ccff54e20f58ec9e4cb83b9ac57b0f8fa257f))
+
+
+### Features
+
+* "src" remove middleware persistence ([4567aa2](https://github.com/fluwdev/fluwtate/commit/4567aa2b24d77b1b902e8bfa110f0b84f211a902))
+* new types globals library ([6914485](https://github.com/fluwdev/fluwtate/commit/6914485ac222cd76ae81d12693e6e311c43efff0))
+
 # [1.2.0](https://github.com/fluwdev/fluwtate/compare/v1.1.0...v1.2.0) (2024-12-04)
 
 
