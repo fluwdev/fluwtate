@@ -8,12 +8,11 @@ export function runMiddlewares<S>(
   for (const middleware of stack) {
     const result = middleware(prevState, nextState);
 
-    if (result === false) {
+    if (result !== undefined) {
       console.warn(
-        "Middleware blocked state change🔒:",
+        "Middleware returned a value when it should return void:",
         middleware.name || "anonymous"
       );
-      return false;
     }
   }
   return true;

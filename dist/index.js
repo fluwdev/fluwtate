@@ -1,152 +1,109 @@
-import { useRef as d, useEffect as f, useCallback as y, useState as g } from "react";
-function S(s, e) {
-  if (Object.is(s, e)) return !0;
-  if (typeof s != "object" || s === null || typeof e != "object" || e === null)
-    return !1;
-  const r = /* @__PURE__ */ new WeakMap();
-  function t(n, o) {
-    var i;
-    if (Object.is(n, o)) return !0;
-    if (typeof n != "object" || n === null || typeof o != "object" || o === null)
-      return !1;
-    if (r.has(n) && ((i = r.get(n)) != null && i.has(o))) return !0;
-    r.has(n) || r.set(n, /* @__PURE__ */ new Set()), r.get(n).add(o);
-    const c = Object.keys(n), u = Object.keys(o);
-    if (c.length !== u.length) return !1;
-    for (const a of c)
-      if (!Object.prototype.hasOwnProperty.call(o, a) || !t(n[a], o[a])) return !1;
-    return !0;
-  }
-  return t(s, e);
-}
-function p(s, e, r) {
-  for (const t of s)
-    if (t(e, r) === !1)
-      return console.warn(
-        "Middleware blocked state change🔒:",
-        t.name || "anonymous"
-      ), !1;
-  return !0;
-}
-function _(s) {
-  let e;
-  const r = /* @__PURE__ */ new Set(), t = [];
-  return typeof s == "function" ? s().then((n) => {
-    e = n;
-  }) : e = s, {
-    getState() {
-      return e;
-    },
-    setState(n) {
-      const o = typeof n == "function" ? n(e) : { ...e, ...n };
-      p(t, e, o) && (S(e, o) || (e = o, r.forEach((c) => c(e))));
-    },
-    subscribe(n) {
-      return r.add(n), () => r.delete(n);
-    },
-    use(n) {
-      t.push(n);
+import { useRef as d, useEffect as S, useCallback as g, useState as w } from "react";
+const O = (n, t = "localStorage") => {
+  const e = window[t];
+  return (s, r) => {
+    try {
+      const c = JSON.stringify(r);
+      e.setItem(n, c);
+    } catch (c) {
+      console.error(`Failed to persist state in ${t}:`, c);
     }
   };
-}
-function E(s, e) {
+}, _ = (n, t, e = "localStorage") => {
+  try {
+    const r = window[e].getItem(n);
+    if (!r)
+      return t;
+    const c = JSON.parse(r);
+    return { ...t, ...c };
+  } catch (s) {
+    return console.error(`Failed to rehydrate state from ${e}:`, s), t;
+  }
+}, D = (n, t) => {
+  const { persistKey: e, storageType: s = "localStorage" } = t || {}, r = /* @__PURE__ */ new Set();
+  let c = e ? _(e, n, s) : n, a = !1, o = null;
+  const f = () => c, u = (l) => {
+    a ? o = { ...o, ...l } : y(l);
+  }, y = (l) => {
+    const i = c;
+    c = { ...c, ...l }, r.forEach((p) => p()), e && O(e, s)(i, c);
+  };
+  return { getState: f, setState: u, subscribe: (l) => (r.add(l), () => r.delete(l)), transaction: (l) => {
+    a = !0, o = {};
+    try {
+      l(u), o && y(o);
+    } catch (i) {
+      throw console.error("Transaction failed:", i), i;
+    } finally {
+      a = !1, o = null;
+    }
+  } };
+};
+function T(n, t) {
   return {
-    getState: () => s.getState()[e],
-    setState: (r) => {
-      s.setState((t) => ({
-        ...t,
-        [e]: typeof r == "function" ? r(t[e]) : { ...t[e], ...r }
+    getState: () => n.getState()[t],
+    setState: (e) => {
+      n.setState((s) => ({
+        ...s,
+        [t]: typeof e == "function" ? e(s[t]) : Object.assign({}, s[t], e)
       }));
     },
-    subscribe: (r) => s.subscribe((t) => r(t[e]))
+    subscribe: (e) => n.subscribe((s) => e(s[t]))
   };
 }
-function O({
-  key: s,
-  storage: e,
-  serializer: r = JSON.stringify
-}) {
-  return (t, n) => (Promise.resolve(e.setItem(s, r(n))).catch(
-    (o) => console.error("Error persisting state❌:", o)
-  ), !0);
-}
-async function h({
-  key: s,
-  storage: e,
-  deserializer: r = JSON.parse
-}) {
-  try {
-    const t = await e.getItem(s);
-    return t ? r(t) : void 0;
-  } catch (t) {
-    console.error("Error loading persisted state❌:", t);
-    return;
-  }
-}
-function k(s = "CustomStore") {
-  const e = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: s });
-  return (r, t) => (e == null || e.send(
+function R(n = "CustomStore") {
+  const t = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: n });
+  return (e, s) => (t == null || t.send(
     {
       type: "STATE_UPDATE",
-      payload: t
+      payload: s
     },
-    t
+    s
   ), !0);
 }
-function b({
-  key: s,
-  storage: e = localStorage,
-  serializer: r = JSON.stringify
-}) {
-  return (t, n) => {
-    try {
-      e.setItem(s, r(n));
-    } catch (o) {
-      console.error("Error persisting state❌:", o);
-    }
+function h(n, t) {
+  if (Object.is(n, t)) return !0;
+  if (typeof n != "object" || n === null || typeof t != "object" || t === null)
+    return !1;
+  const e = /* @__PURE__ */ new WeakMap();
+  function s(r, c) {
+    var f;
+    if (Object.is(r, c)) return !0;
+    if (typeof r != "object" || r === null || typeof c != "object" || c === null)
+      return !1;
+    if (e.has(r) && ((f = e.get(r)) != null && f.has(c))) return !0;
+    e.has(r) || e.set(r, /* @__PURE__ */ new Set()), e.get(r).add(c);
+    const a = Object.keys(r), o = Object.keys(c);
+    if (a.length !== o.length) return !1;
+    for (const u of a)
+      if (!Object.prototype.hasOwnProperty.call(c, u) || !s(r[u], c[u])) return !1;
     return !0;
-  };
-}
-function D({
-  key: s,
-  storage: e = localStorage,
-  deserializer: r = JSON.parse
-}) {
-  try {
-    const t = e.getItem(s);
-    return t ? r(t) : void 0;
-  } catch (t) {
-    console.error("Error loading persisted state❌:", t);
-    return;
   }
+  return s(n, t);
 }
-function P(s, e = (r) => r) {
-  const r = d(e);
-  f(() => {
-    r.current = e;
-  }, [e]);
-  const t = y(() => {
-    const u = s.getState();
-    return r.current(u);
-  }, [s]), [n, o] = g(t), c = d(n);
-  return f(() => {
-    c.current = n;
-  }, [n]), f(() => {
-    const u = (a) => {
-      const l = t();
-      S(l, c.current) || o(l);
-    }, i = s.subscribe(u);
-    return () => i();
-  }, [s, t]), n;
+function j(n, t = (e) => e) {
+  const e = d(t);
+  S(() => {
+    e.current = t;
+  }, [t]);
+  const s = g(() => {
+    const o = n.getState();
+    return e.current(o);
+  }, [n]), [r, c] = w(s), a = d(r);
+  return S(() => {
+    a.current = r;
+  }, [r]), S(() => {
+    const o = () => {
+      const u = s();
+      h(u, a.current) || c(u);
+    }, f = n.subscribe(o);
+    return () => f();
+  }, [n, s]), r;
 }
 export {
-  O as createAsyncPersistence,
-  E as createModule,
-  b as createPersistenceMiddleware,
-  _ as createStore,
-  k as devtool,
-  h as loadAsyncPersistedState,
-  D as loadPersistedState,
-  S as shallow,
-  P as useStore
+  T as createModule,
+  D as createStore,
+  R as devtool,
+  h as shallow,
+  j as useStore
 };

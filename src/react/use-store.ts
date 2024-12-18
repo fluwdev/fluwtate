@@ -26,7 +26,7 @@ export function useStore<S extends State, T = S>(
   }, [selectedState]);
 
   useEffect(() => {
-    const listener: Listener<S> = (_) => {
+    const listener: Listener<S> = () => {
       const newSelectedState = getSelectedState();
 
       if (!shallow(newSelectedState, selectedStateRef.current)) {

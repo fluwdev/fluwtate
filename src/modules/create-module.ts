@@ -13,7 +13,7 @@ export function createModule<S extends State, K extends keyof S>(
         [moduleName]:
           typeof updater === "function"
             ? (updater as StateUpdater<S[K]>)(state[moduleName])
-            : { ...state[moduleName], ...updater },
+            : Object.assign({}, state[moduleName], updater),
       }));
     },
 

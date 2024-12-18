@@ -1,12 +1,32 @@
 export type StorageType = "localStorage" | "sessionStorage";
 
-export type State = Record<string, any>;
+export interface Storage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear(): void;
+}
+
+export type StateValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | StateObject
+  | StateValue[];
+
+export interface StateObject {
+  [key: string]: StateValue;
+}
+
+export type State = StateObject;
 
 export type StateUpdater<S> = (state: S) => S;
 
 export type Listener<S> = (state: S) => void;
 
-export type Middleware<S> = (prevState: S, nextState: S) => boolean | void;
+export type Middleware<T> = (prevState: T, nextState: T) => void;
 
 export interface Store<S extends State> {
   getState: () => S;

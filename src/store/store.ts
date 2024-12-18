@@ -2,7 +2,7 @@ import { StorageType } from "../index.d";
 import { persistMiddleware } from "../middleware/persist-middleware";
 import { rehydrateState } from "../modules/rehydrate-state";
 
-export const createStore = <T>(
+export const createStore = <T extends object>(
   initialState: T,
   options?: { persistKey?: string; storageType?: StorageType }
 ) => {
@@ -10,7 +10,7 @@ export const createStore = <T>(
 
   const listeners = new Set<() => void>();
   let currentState = persistKey
-    ? rehydrateState(persistKey, initialState, storageType)
+    ? rehydrateState<T>(persistKey, initialState, storageType)
     : initialState;
 
   let transactionActive = false;
@@ -32,7 +32,7 @@ export const createStore = <T>(
     listeners.forEach((listener) => listener());
 
     if (persistKey) {
-      persistMiddleware(persistKey, storageType)(prevState, currentState);
+      persistMiddleware<T>(persistKey, storageType)(prevState, currentState);
     }
   };
 
