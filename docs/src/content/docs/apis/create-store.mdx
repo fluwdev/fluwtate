@@ -1,9 +1,9 @@
 ---
 title: createStore
-description: Creating and managing a store with support for asynchronous initial state.
+description: Creating and managing a store with support for asynchronous initial state, transactions, and persistence.
 ---
 
-The `createStore` function is used to create a state store, allowing you to manage the state of your application. It can handle both synchronous and asynchronous initial state, making it flexible and suitable for various use cases, such as loading state from an API or other asynchronous operations.
+The `createStore` function is used to create a state store, allowing you to manage the state of your application. It can handle both synchronous and asynchronous initial state, making it flexible and suitable for various use cases, such as loading state from an API or other asynchronous operations. Additionally, it now supports transactions and state persistence.
 
 ## Usage
 
@@ -38,16 +38,18 @@ const initialState = async () => {
 const store = createStore(initialState);
 ```
 
-In the asynchronous example, the initialStateAsync function fetches user data asynchronously before resolving the initial state for the store.
+In the asynchronous example, the `initialState` function fetches user data asynchronously before resolving the initial state for the store.
 
 ## Parameters
+
 - `initialState`: The initial state for the store. It can be:
-    - A synchronous value representing the initial state (e.g., an object, array, etc.).
-    - A function returning a Promise that resolves to the initial state (useful for async operations like fetching data).
+  - A synchronous value representing the initial state (e.g., an object, array, etc.).
+  - A function returning a Promise that resolves to the initial state (useful for async operations like fetching data).
 
 ## Methods
 
 ### `getState()`
+
 Returns the current state of the store.
 
 ```ts
@@ -55,16 +57,27 @@ const state = store.getState();
 ```
 
 ### `setState(updater)`
-Updates the state of the store using the provided updater function.
+
+Updates the state of the store using the provided updater function. Supports transactions for batching multiple state updates.
 
 ```ts
 store.setState((state) => ({
   todos: [...state.todos, newTodo],
 }));
+
+// Inside a transaction:
+store.transaction(() => {
+  store.setState((state) => ({ ...state, user: { name: "Alice" } }));
+  store.setState((state) => ({
+    ...state,
+    todos: [...state.todos, { id: 1, title: "Learn Fluwtate" }],
+  }));
+});
 ```
 
 ### `subscribe(listener)`
-Subscribes to state changes in the store and executes the provided listener function.
+
+Subscribes to state changes in the store and executes the provided listener function. Listeners will only be triggered once after a transaction is completed.
 
 ```ts
 store.subscribe((state) => {
@@ -73,7 +86,8 @@ store.subscribe((state) => {
 ```
 
 ### `use(middleware)`
-Adds a middleware to the store. Middleware is a function that intercepts state changes and can perform additional actions, such as logging, validation, or persistence.
+
+Adds a middleware to the store. Middleware is a function that intercepts state changes and can perform additional actions, such as logging, validation, or persistence. Middleware integrates seamlessly with transactions and persistence.
 
 ```ts
 const middleware = (prevState, nextState) => {
@@ -83,8 +97,77 @@ const middleware = (prevState, nextState) => {
 store.use(middleware);
 ```
 
+### `persist(options)`
+
+Enables persistence for the store, allowing state to be saved and restored automatically.
+
+```ts
+store.persist({
+  key: "app-state",
+  storage: localStorage, // or sessionStorage
+});
+```
+
+### `transaction(callback)`
+
+Begins a transaction, buffering state updates until the transaction is complete. This reduces unnecessary re-renders and listener notifications.
+
+```ts
+store.transaction(() => {
+  store.setState((state) => ({ ...state, user: { name: "Alice" } }));
+  store.setState((state) => ({
+    ...state,
+    todos: [...state.todos, { id: 1, title: "Learn Fluwtate" }],
+  }));
+});
+```
+
 ## Key Features
+
 - Handles both synchronous and asynchronous initial state.
 - Provides a simple API for managing state changes.
 - Supports middleware for intercepting state changes and performing additional actions.
-- Offers a flexible and extensible architecture for building complex state management solutions.
+- Offers transactions for batching state updates.
+- Enables state persistence with integration to storage solutions.
+- Flexible and extensible architecture for building complex state management solutions.
+
+## Advanced Usage
+
+### Combining Persistence and Transactions
+
+You can combine the persistence and transaction features to optimize your application's state handling.
+
+```ts
+store.persist({
+  key: "app-state",
+  storage: localStorage,
+});
+
+store.transaction(() => {
+  store.setState((state) => ({ ...state, user: { name: "Bob" } }));
+  store.setState((state) => ({
+    ...state,
+    todos: [{ id: 2, title: "Persist State" }],
+  }));
+});
+```
+
+### Middleware with Transactions
+
+Middleware will only be executed once after a transaction completes, ensuring consistent behavior.
+
+```ts
+const loggingMiddleware = (prevState, nextState) => {
+  console.log("Logging state change:", prevState, nextState);
+  return true;
+};
+store.use(loggingMiddleware);
+
+store.transaction(() => {
+  store.setState((state) => ({ ...state, user: { name: "Charlie" } }));
+  store.setState((state) => ({
+    ...state,
+    todos: [{ id: 3, title: "Test Middleware" }],
+  }));
+});
+```
